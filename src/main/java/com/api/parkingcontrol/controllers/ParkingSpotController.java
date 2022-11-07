@@ -3,6 +3,8 @@ package com.api.parkingcontrol.controllers;
 import com.api.parkingcontrol.dto.ParkingSpotDto;
 import com.api.parkingcontrol.models.ParkingSpotModel;
 import com.api.parkingcontrol.services.ParkingSpotService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import java.util.UUID;
 @RestController
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/parking-spot")
+@Api(value = "API Rest Parking Control")
 public class ParkingSpotController {
 
     final ParkingSpotService parkingSpotService;
@@ -31,6 +34,7 @@ public class ParkingSpotController {
     }
 
     @PostMapping
+    @ApiOperation(value = "Cadastra um novo veículo na base de dados")
     public ResponseEntity<Object> saveParkingSpot(@RequestBody @Valid ParkingSpotDto parkingSpotDto){
 
         if (parkingSpotService.existsBylicensePlateCar(parkingSpotDto.getLicensePlateCar())) {
@@ -52,11 +56,13 @@ public class ParkingSpotController {
     }
 
     @GetMapping
+    @ApiOperation(value = "Retorna todos os veículos cadastrados por paginação")
     public ResponseEntity<Page<ParkingSpotModel>> getAllParkingSpots(@PageableDefault(page = 0, size = 10, sort = "id", direction = Sort.Direction.ASC)Pageable pageable){
         return ResponseEntity.status(HttpStatus.OK).body(parkingSpotService.findAll(pageable));
     }
 
     @GetMapping("/{id}")
+    @ApiOperation(value = "Retorna dados do veículo cadastrado por ID")
     public ResponseEntity<Object> getOneParkingSpot(@PathVariable(value = "id")UUID id){
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
         if (!parkingSpotModelOptional.isPresent()) {
@@ -66,6 +72,7 @@ public class ParkingSpotController {
     }
 
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Deleta veículo cadastrado por ID")
     public ResponseEntity<Object> deleteOneParkingSpot(@PathVariable(value = "id")UUID id){
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
         if (!parkingSpotModelOptional.isPresent()) {
@@ -76,6 +83,7 @@ public class ParkingSpotController {
     }
 
     @PutMapping("/{id}")
+    @ApiOperation(value = "Atualiza veículo cadastrado por ID")
     public ResponseEntity<Object> updateOneParkingSpot(@PathVariable(value = "id")UUID id,
                                                        @RequestBody @Valid ParkingSpotDto parkingSpotDto){
         Optional<ParkingSpotModel> parkingSpotModelOptional = parkingSpotService.findById(id);
